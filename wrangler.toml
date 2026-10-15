@@ -5,3 +5,13 @@ main = "src/index.js"
 [vars]
 TARGET_BASE_URL = "https://generativelanguage.googleapis.com"
 
+# Новая привязка для Durable Object
+[[durable_objects.bindings]]
+name = "GEMINI_PROXY_DO"          # Имя, по которому будем обращаться в коде
+class_name = "GeminiProxyDO"      # Имя класса Durable Object
+
+# Необходимо для работы Durable Objects
+[[migrations]]
+tag = "v1"
+new_classes = ["GeminiProxyDO"]
+
