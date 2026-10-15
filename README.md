@@ -1,54 +1,49 @@
 # CF Proxy
 
-Легковесный асинхронный HTTP/HTTPS reverse-proxy на базе Python, **FastAPI** и **HTTPX**.
+Прокси-сервис с поддержкой двух вариантов запуска:
+1. **Cloudflare Worker** (JavaScript, `src/index.js`, деплой через Wrangler / Cloudflare Dashboard).
+2. **Локальный Python-сервер** (FastAPI + HTTPX, `main.py`).
 
-## Возможности
+---
 
-- Проксирование любых HTTP-методов (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS`, `HEAD`).
-- Потоковая передача данных (streaming request & response).
-- Фильтрация hop-by-hop HTTP-заголовков.
-- Простой эндпоинт проверки статуса: `/health`.
-- Настройка целевого URL через переменную окружения `TARGET_BASE_URL`.
+## 1. Cloudflare Worker (Основной режим)
 
-## Быстрый старт
+Конфигурация описана в `wrangler.toml`, точка входа — `src/index.js`.
 
-### 1. Установка зависимостей
+### Возможности Worker:
+- Автоматический деплой при пуше в GitHub через Cloudflare Workers Git Integration.
+- Проксирование запросов на адрес, указанный в переменной `TARGET_BASE_URL` (по умолчанию `https://httpbin.org`).
+- Очистка hop-by-hop и Cloudflare-специфичных заголовков.
+- Проверка здоровья по адресу `/health`.
 
+### Локальное тестирование Worker:
 ```bash
-# Создание виртуального окружения
+npx wrangler dev
+```
+
+### Развёртывание:
+```bash
+npx wrangler deploy
+```
+
+---
+
+## 2. Запуск на Python (FastAPI)
+
+### Установка зависимостей
+```bash
 python -m venv .venv
 
-# Активация (Windows)
+# Windows:
 .venv\Scripts\activate
-# Активация (Linux/macOS)
+# Linux/macOS:
 source .venv/bin/activate
 
-# Установка пакетов
 pip install -r requirements.txt
 ```
 
-### 2. Настройка
-
-Скопируйте пример файла конфигурации или установите переменную окружения:
-
+### Запуск
 ```bash
-copy .env.example .env
-```
-
-По умолчанию в качестве примера задан `TARGET_BASE_URL=https://httpbin.org`.
-
-### 3. Запуск сервера
-
-```bash
-# Через uvicorn CLI
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
-
-# Или напрямую через Python
-python main.py
 ```
 
-### 4. Проверка работы
-
-- Статус: [http://localhost:8000/health](http://localhost:8000/health)
-- Проксирование: [http://localhost:8000/get](http://localhost:8000/get) (перенаправит на `https://httpbin.org/get`)
-- Документация Swagger UI: [http://localhost:8000/docs](http://localhost:8000/docs)
