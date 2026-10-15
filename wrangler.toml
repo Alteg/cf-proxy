@@ -13,5 +13,6 @@ class_name = "GeminiProxyDO"      # Имя класса Durable Object
 # Необходимо для работы Durable Objects
 [[migrations]]
 tag = "v1"
-new_classes = ["GeminiProxyDO"]
+new_sqlite_classes = ["GeminiProxyDO"]
+
 
